@@ -25,3 +25,12 @@ app.include_router(topsis_router)
 @app.get("/")
 def health_check():
     return {"status": "Backend is running"}
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "service": "topsis-backend",
+        "env": "production"
+    }
+
