@@ -5,8 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="TOPSIS Web API",
     description="API for running TOPSIS and emailing results",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],        # allow all origins (safe for demo)
