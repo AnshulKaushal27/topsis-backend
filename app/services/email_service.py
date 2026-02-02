@@ -1,47 +1,36 @@
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+import base64
 import os
-import smtplib
-from email.message import EmailMessage
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
-def send_email_with_attachment(
-    to_email: str,
-    subject: str,
-    body: str,
-    attachment_path: str
-):
-    """
-    Sends an email with a CSV attachment.
-    """
+def send_email_with_attachment(to_email, subject, body, attachment_path):
+    try:
+        sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
 
-    msg = EmailMessage()
-    msg["From"] = EMAIL_USER
-    msg["To"] = to_email
-    msg["Subject"] = subject
-    msg.set_content(body)
+        message = Mail(
+            from_email="no-reply@topsis-app.com",  # sender (does not need to exist)
+            to_emails=to_email,
+            subject=subject,
+            plain_text_content=body,
+        )
 
-    # Attach file
-    with open(attachment_path, "rb") as f:
-        file_data = f.read()
-        file_name = os.path.basename(attachment_path)
+        # Attach CSV
+        with open(attachment_path, "rb") as f:
+            encoded_file = base64.b64encode(f.read()).decode()
 
-    msg.add_attachment(
-        file_data,
-        maintype="application",
-        subtype="octet-stream",
-        filename=file_name
-    )
+        attachment = Attachment(
+            FileContent(encoded_file),
+            FileName(os.path.basename(attachment_path)),
+            FileType("text/csv"),
+            Disposition("attachment"),
+        )
 
-    # Send email
-    with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASSWORD)
-        server.send_message(msg)
+        message.attachment = attachment
+
+        response = sg.send(message)
+
+        print("✅ SendGrid email sent:", response.status_code)
+
+    except Exception as e:
+        print("❌ SendGrid email error:", str(e))
