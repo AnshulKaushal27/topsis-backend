@@ -9,7 +9,7 @@ def send_email_with_attachment(to_email, subject, body, attachment_path):
         sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
 
         message = Mail(
-            from_email="no-reply@topsis-app.com",  # sender (does not need to exist)
+            from_email="parralexpie@gmail.com",  # sender (does not need to exist)
             to_emails=to_email,
             subject=subject,
             plain_text_content=body,
