@@ -84,14 +84,14 @@ backend/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone [https://github.com/AnshulKaushal27/topsis-backend]
    cd backend
    ```
 
 2. **Create a virtual environment**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv\Scripts\activate
    ```
 
 3. **Install dependencies**
